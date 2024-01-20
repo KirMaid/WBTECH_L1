@@ -8,49 +8,35 @@ import (
 	"sync"
 )
 
-// Функция для вычисления квадрата числа и отправки результата в канал.
-func squareWorker(numbers <-chan int, squares chan<- int, wg *sync.WaitGroup) {
+// Рассчитываем квадрат и отправляем в канал
+func calcSquare(num int, resChan chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for number := range numbers {
-		squares <- number * number // отправляем квадрат числа в канал
-	}
-}
-
-// Функция для подсчета итоговой суммы из канала квадратов.
-func sumWorker(squares <-chan int, wg *sync.WaitGroup) {
-	defer wg.Done()
-	sum := 0
-	for square := range squares {
-		sum += square
-	}
-	fmt.Printf("Сумма квадратов: %d\n", sum)
+	resChan <- num * num
 }
 
 func main() {
-	numbers := []int{2, 4, 6, 8, 10} // последовательность чисел
-	numWorker := 5                   // количество горутин-воркеров
-
+	numbers := []int{2, 4, 6, 8, 10}
+	//Создаём канал
+	resChan := make(chan int)
+	//Для корректного оповещения о завершении работы корутины создаём WaitGroup
 	var wg sync.WaitGroup
-	numberChan := make(chan int, len(numbers))
-	squareChan := make(chan int, numWorker)
 
-	// Запускаем воркеры для вычисления квадратов
-	wg.Add(numWorker)
-	for i := 0; i < numWorker; i++ {
-		go squareWorker(numberChan, squareChan, &wg)
+	//На каждое число создаём свою корутину и передаём информацию в WaitGroup
+	wg.Add(len(numbers))
+
+	//Каждая корутина рассчитываем свой квадрат числа
+	for _, num := range numbers {
+		go calcSquare(num, resChan, &wg)
 	}
 
-	// Запускаем воркера для подсчета суммы
-	wg.Add(1)
-	go sumWorker(squareChan, &wg)
+	//Ждём завершения работы всех корутин и закрываем канал
+	go func() {
+		wg.Wait()
+		close(resChan)
+	}()
 
-	// Отправляем числа в канал
-	for _, number := range numbers {
-		numberChan <- number
+	//Выводим информацию из канала
+	for res := range resChan {
+		fmt.Println(res)
 	}
-	close(numberChan) // закрываем канал после отправки всех чисел
-
-	// Ждем завершения всех горутин
-	wg.Wait()
-	close(squareChan) // закрываем канал после завершения работы воркеров
 }
