@@ -15,6 +15,7 @@ func main() {
 	groups := make(map[int][]float64)
 
 	for _, temp := range temps {
+		//Для каждой температуры вычисляется номер группы, в которую она должна быть помещена, путем округления значения температуры вниз до ближайшего десятка
 		groupNum := int(math.Floor(temp / 10))
 		groups[groupNum] = append(groups[groupNum], temp)
 	}
