@@ -3,14 +3,14 @@
 
 var justString string
 
-func someFunc() {
-  v := createHugeString(1 << 10)
-  justString = v[:100]
-}
+	func someFunc() {
+	  v := createHugeString(1 << 10)
+	  justString = v[:100]
+	}
 
-func main() {
-  someFunc()
-}
+	func main() {
+	  someFunc()
+	}
 
 Ответ:
 Когда делается срез строки, фактически создаётся новая строка, которая ссылается на ту же область памяти, что и оригинальная строка.
@@ -20,10 +20,9 @@ func main() {
 
 Чтобы исправить эту проблему, можно скопировать подстроку в новую строку, что гарантирует, что justString будет действительной независимо от оригинальной строки.
 
-func someFunc() {
-	v := createHugeString(1 << 10)
-	justString = string(v[:100])
-}
+	func someFunc() {
+		v := createHugeString(1 << 10)
+		justString = string(v[:100])
+	}
 */
-
 package main

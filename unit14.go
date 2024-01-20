@@ -6,6 +6,7 @@ import (
 	"reflect"
 )
 
+// Для определения типа переменной используем пакет reflect
 func printType(i interface{}) {
 	switch reflect.TypeOf(i).Kind() {
 	case reflect.Int:

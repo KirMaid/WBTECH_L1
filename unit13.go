@@ -10,7 +10,7 @@ func main() {
 	fmt.Printf("Before swapping: a = %d, b = %d\n", a, b)
 
 	// Используем первую функцию
-	swapWithoutTempVar(a, b)
+	swapWithoutTempVar(&a, &b)
 	fmt.Printf("After swapping with addition and subtraction: a = %d, b = %d\n", a, b)
 
 	// Используем вторую функцию
@@ -19,10 +19,10 @@ func main() {
 	fmt.Printf("After swapping with XOR: a = %d, b = %d\n", a, b)
 }
 
-func swapWithoutTempVar(a, b int) {
-	b = a + b
-	a = b - a
-	b = b - a
+func swapWithoutTempVar(a, b *int) {
+	*a = *a + *b
+	*b = *a - *b
+	*a = *a - *b
 }
 
 func swapWithXor(a, b *int) {
